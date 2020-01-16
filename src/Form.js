@@ -3,8 +3,7 @@ import firebaseConf from './Firebase';
 import { loadProgressBar } from 'axios-progress-bar'
 import Modal from 'react-modal';
 import React, { Component } from 'react';
-// import reset from 'modern-css-reset';
-// import Spinner from 'react-spinkit';
+
 import styled from 'styled-components';
 
 import './Form.css';
@@ -82,8 +81,8 @@ export default class Form extends Component {
         message: '',
         showModalSuccess: false,
         showModalError: false,
-        // display: 'none'
         messagesHistory: [],
+        disabled: false
     };
     this.onSubmitHandler = this.onSubmitHandler.bind( this );
     this.onChangeHandler = this.onChangeHandler.bind( this );
@@ -91,7 +90,6 @@ export default class Form extends Component {
     this.handleCloseModalSuccess = this.handleCloseModalSuccess.bind( this );
     this.handleCloseModalError = this.handleCloseModalError.bind( this );
     this.updateList = this.updateList.bind( this );
-    // this.spinnerHandler = this.spinnerHandler.bind( this );
   }
 
   componentWillMount = () => {
@@ -133,6 +131,9 @@ export default class Form extends Component {
 
   onSubmitHandler = ( event ) => {
     event.preventDefault();
+
+    this.setState({ disabled: true })
+
     let name = this.state.name;
     let email = this.state.email;
     let message = this.state.message;
@@ -176,16 +177,18 @@ export default class Form extends Component {
   }
 
   handleCloseModalSuccess = () => {
-    this.setState({ showModalSuccess: false })
+    this.setState({
+      showModalSuccess: false,
+      disabled: false
+     })
   }
 
   handleCloseModalError = () => {
-    this.setState({ showModalError: false })
+    this.setState({
+      showModalSuccess: false,
+      disabled: false
+     })
   }
-
-  // spinnerHandler = () => {
-  //   this.setState({ display: 'block' })
-  // }
 
   render() {
 
@@ -240,9 +243,8 @@ export default class Form extends Component {
             </label>
           </p>
           <div>
-            <button type='submit' name='send' onClick = { this.spinnerHandler }>Send</button>
+            <button type='submit' name='send' disabled = { this.state.disabled }>Send</button>
           </div>
-          {/*<Spinner name='three-bounce' style = {{ display: this.state.display, marginLeft: '1em' }} />*/}
         </form>
         <div className = 'grid'>
           {history}
