@@ -96,10 +96,19 @@ export default class Form extends Component {
   }
 
   updateList = () => {
-    /* Create reference to messages in Firebase Database */
+    /* Create a reference to messages in the Firebase Database.
+    The reference represents a specific location in the Database,
+    and can be used for reading or writing data to that Database location. */
     let messagesRef = firebaseConf.database().ref();
-    /*  */
+    /* Firebase offers several different event types for reading data.
+
+    child_added
+
+    This event type will be triggered once for every message and every time
+    a new message is added to the Database.  */
     messagesRef.on( 'child_added', ( snapshot ) => {
+      /* snapshot.val() contains an object of objects from the Database:
+      { {}, {}, ... , {} } */
       let obj = snapshot.val();
       // console.log( obj )
       for (let key in obj) {
@@ -128,7 +137,7 @@ export default class Form extends Component {
   }
 
   onSubmitHandler = ( event ) => {
-    event.preventDefault();
+    event.preventDefault(); /* Prevent form submit from reloading the page */
 
     this.setState({ disabled: true })
 
@@ -140,21 +149,21 @@ export default class Form extends Component {
         email: email,
         message: message
     };
-    let axiosConfig = {
+    let axiosConfig = { /* Config headers to avoid CORS issues */
       headers: {
           'Content-Type': 'application/json;charset=UTF-8',
           "Access-Control-Allow-Origin": "*"
       }
     };
 
-    firebaseConf.database().ref('messages').child(Date.now()).set(
+    firebaseConf.database().ref('messages').child(Date.now()).set( /* Set up a unique key value in DB */
         formObj
     );
 
     this.updateList();
 
     axios
-    .post( 'https://us-central1-react-feedback-form.cloudfunctions.net/app', formObj, axiosConfig )
+    .post( 'https://us-central1-react-feedback-form.cloudfunctions.net/app', formObj, axiosConfig ) /* POST request by axios to the function */
     .then( ( res ) => {
         // console.log( res.status )
         if ( res.data.msg === 'success' ) {
