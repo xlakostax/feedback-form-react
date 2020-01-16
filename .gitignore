@@ -7,7 +7,7 @@
 /.pnp
 .pnp.js
 .firebase
-firebase-debug.log
+
 
 # testing
 /coverage
@@ -23,5 +23,6 @@ firebase-debug.log
 .env.production.local
 
 npm-debug.log*
+firebase-debug.log*
 yarn-debug.log*
 yarn-error.log*
