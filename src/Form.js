@@ -1,27 +1,22 @@
 import axios from 'axios';
-import fire from './Firebase';
+import firebaseConf from './Firebase';
+import { loadProgressBar } from 'axios-progress-bar'
 import Modal from 'react-modal';
 import React, { Component } from 'react';
-import reset from 'modern-css-reset';
+// import reset from 'modern-css-reset';
 // import Spinner from 'react-spinkit';
 import styled from 'styled-components';
 
 import './Form.css';
+import 'axios-progress-bar/dist/nprogress.css';
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  text-align: justify;
+  margin: 20%;
+  width: 60%;
   & form {
-    position: relative;
-    display: block;
-    width: 40%;
-    margin: auto 0;
-    top: 0; right: 0; bottom: 0; left: 0;
+
+    margin-bottom: 1em;
   }
   & span {
     color: rgb( 255, 99, 71 )
@@ -52,9 +47,29 @@ const Wrapper = styled.div`
     color: rgb( 255, 99, 71 );
     border: 1px solid rgb( 255, 99, 71 );
   }
-  & div {
+  & form > div {
     display: flex;
     align-items: center;
+  }
+  & .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    /* padding: auto 10%; */
+    background-color: white;
+  }
+  & .card-inGrid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1em;
+    overflow-wrap: break-word;
+    border-bottom: 1px solid black;
+    &:last-child {
+      border-bottom: 0 solid black;
+    }
   }
 `;
 
@@ -68,47 +83,81 @@ export default class Form extends Component {
         showModalSuccess: false,
         showModalError: false,
         // display: 'none'
+        messagesHistory: [],
     };
     this.onSubmitHandler = this.onSubmitHandler.bind( this );
     this.onChangeHandler = this.onChangeHandler.bind( this );
     this.resetForm = this.resetForm.bind(this);
     this.handleCloseModalSuccess = this.handleCloseModalSuccess.bind( this );
     this.handleCloseModalError = this.handleCloseModalError.bind( this );
+    this.updateList = this.updateList.bind( this );
     // this.spinnerHandler = this.spinnerHandler.bind( this );
   }
 
+  componentWillMount = () => {
+    this.updateList();
+    loadProgressBar();
+  }
+
+  updateList = () => {
+    /* Create reference to messages in Firebase Database */
+    let messagesRef = firebaseConf.database().ref();
+    /*  */
+    messagesRef.on( 'child_added', ( snapshot ) => {
+      let obj = snapshot.val();
+      console.log( obj )
+      for (let key in obj) {
+         obj[ key ][ 'id' ] = key;
+      }
+
+      let messHistory = [];
+      for (let key in obj) {
+          messHistory.push( obj[ key ] )
+      }
+      console.log( messHistory )
+      this.setState( {
+         messagesHistory: messHistory
+      })
+      console.log( this.state.messagesHistory )
+    });
+  }
+
   onChangeHandler = ( event ) => {
-    // event.preventDefault();
     let name = event.target.name;
     let value = event.target.value;
+
     this.setState({
-        [name]: value /* The ES6 computed property name syntax is used to update the state key corresponding to the given input name:*/
+        [name]: value, /* The ES6 computed property name syntax is used to update the state key corresponding to the given input name:*/
     });
   }
 
   onSubmitHandler = ( event ) => {
     event.preventDefault();
-
-    const name = this.state.name;
-    const email = this.state.email;
-    const message = this.state.message;
-    console.log( name, email, message );
-    const formObj = {
+    let name = this.state.name;
+    let email = this.state.email;
+    let message = this.state.message;
+    let formObj = {
         name: name,
         email: email,
         message: message
     };
-    const axiosConfig = {
+    let axiosConfig = {
       headers: {
           'Content-Type': 'application/json;charset=UTF-8',
           "Access-Control-Allow-Origin": "*"
       }
     };
 
+    firebaseConf.database().ref('messages').child(Date.now()).set(
+        formObj
+    );
+
+    this.updateList();
+
     axios
     .post( 'https://us-central1-react-feedback-form.cloudfunctions.net/app', formObj, axiosConfig )
     .then( ( res ) => {
-        console.log( res )
+        // console.log( res )
         if ( res.data.msg === 'success' ) {
             this.resetForm();
             this.setState({ display: 'none', showModalSuccess: true });
@@ -140,8 +189,18 @@ export default class Form extends Component {
 
   render() {
 
+    const history = this.state.messagesHistory.map( ( element ) => {
+        return (
+          <div className = 'card-inGrid'>
+            <p key = { element.id }> Name: { element.name } </p>
+            <p key = { element.id }> E-Mail: { element.email } </p>
+            <p key = { element.id }> Message: { element.message } </p>
+          </div>
+        )
+    })
+
     return(
-      <Wrapper>
+      <Wrapper className = 'wrapper'>
         <Modal
             isOpen = { this.state.showModalSuccess }
             contentLabel = 'onRequestClose'
@@ -161,7 +220,7 @@ export default class Form extends Component {
             overlayClassName = 'Overlay'
             shouldCloseOnOverlayClick = { false }
         >
-          <i className='fas fa-times' onClick = { this.handleCloseModalError }  style = {{ cursor: 'pointer', margin: '10px' }}></i>
+          <i className = 'fas fa-times' onClick = { this.handleCloseModalError }  style = {{ cursor: 'pointer', margin: '10px' }}></i>
           <p><span>Error.</span> Your message was not sent. Please check your connection or firewall settings.</p>
         </Modal>
         <form onSubmit = {this.onSubmitHandler}>
@@ -185,6 +244,9 @@ export default class Form extends Component {
           </div>
           {/*<Spinner name='three-bounce' style = {{ display: this.state.display, marginLeft: '1em' }} />*/}
         </form>
+        <div className = 'grid'>
+          {history}
+        </div>
       </Wrapper>
     )
   }

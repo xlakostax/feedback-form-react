@@ -32,3 +32,14 @@
 .Modal:focus {
   outline: none;
 }
+
+#nprogress .bar {
+  background: tomato !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px red, 0 0 5px tomato !important;
+}
+#nprogress .spinner-icon {
+    border-top-color: tomato !important;
+    border-left-color: tomato !important;
+}
