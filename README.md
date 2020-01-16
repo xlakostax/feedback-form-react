@@ -1,5 +1,5 @@
 Create a Firebase project. Firebase will generate a unique address for your app, and will be ready to host it on it's servers.
-
+Be sure that you allow the access to google [](https://accounts.google.com/DisplayUnlockCaptcha) and Less secure apps enabled
 Clone the repo, install firebase-tools, login into Google account:
 ```
 git clone https://github.com/xlakostax/feedback-form-react.git
