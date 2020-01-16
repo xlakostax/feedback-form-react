@@ -202,9 +202,9 @@ export default class Form extends Component {
     const history = this.state.messagesHistory.map( ( element ) => {
         return (
           <div className = 'card-inGrid'>
-            <p key = { element.id }> Name: { element.name } </p>
-            <p key = { element.id }> E-Mail: { element.email } </p>
-            <p key = { element.id }> Message: { element.message } </p>
+            <p key = { element.id }> <b>Name:</b> { element.name } </p>< br/>
+            <p key = { element.id }> <b>E-Mail:</b> { element.email } </p>< br/>
+            <p key = { element.id }> <b>Message:</b> { element.message } </p>< br/>
           </div>
         )
     })

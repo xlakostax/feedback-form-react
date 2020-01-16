@@ -77,6 +77,16 @@ The last step is to make a build and deploy it into firebase
 ```
 npm run build && firebase deploy
 ```
-Open the Firebase Console -> Hosting, and follow the link.
+Open the Firebase Console -> Hosting, and follow the link
 
 [Feadback form with message history example](https://react-feedback-form.web.app/)
+
+Also you can start it locally:
+1. Open the Service Accounts pane of the Google Cloud Console.
+2. Make sure that App Engine default service account is selected, and use the options menu at right to select Create key.
+3. When prompted, select JSON for the key type, and click Create.
+4. Set your Google default credentials to point to the downloaded key:
+```
+set GOOGLE_APPLICATION_CREDENTIALS=path\to\key.json
+firebase emulators:start
+```
