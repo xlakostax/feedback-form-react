@@ -11,10 +11,9 @@ import 'axios-progress-bar/dist/nprogress.css';
 
 const Wrapper = styled.section`
   position: relative;
-  margin: 20%;
+  margin: 10% 20%;
   width: 60%;
   & form {
-
     margin-bottom: 1em;
   }
   & span {
@@ -55,8 +54,7 @@ const Wrapper = styled.section`
     display: grid;
     grid-template-columns: 1fr;
     width: 100%;
-    /* padding: auto 10%; */
-    background-color: white;
+    background-color: rgb( 255, 255, 255 );
   }
   & .card-inGrid {
     position: relative;
@@ -79,9 +77,9 @@ export default class Form extends Component {
         name: '',
         email: '',
         message: '',
+        messagesHistory: [],
         showModalSuccess: false,
         showModalError: false,
-        messagesHistory: [],
         disabled: false
     };
     this.onSubmitHandler = this.onSubmitHandler.bind( this );
@@ -103,7 +101,7 @@ export default class Form extends Component {
     /*  */
     messagesRef.on( 'child_added', ( snapshot ) => {
       let obj = snapshot.val();
-      console.log( obj )
+      // console.log( obj )
       for (let key in obj) {
          obj[ key ][ 'id' ] = key;
       }
@@ -112,11 +110,11 @@ export default class Form extends Component {
       for (let key in obj) {
           messHistory.push( obj[ key ] )
       }
-      console.log( messHistory )
+      // console.log( messHistory )
       this.setState( {
          messagesHistory: messHistory
       })
-      console.log( this.state.messagesHistory )
+      // console.log( this.state.messagesHistory )
     });
   }
 
@@ -158,11 +156,11 @@ export default class Form extends Component {
     axios
     .post( 'https://us-central1-react-feedback-form.cloudfunctions.net/app', formObj, axiosConfig )
     .then( ( res ) => {
-        // console.log( res )
+        // console.log( res.status )
         if ( res.data.msg === 'success' ) {
             this.resetForm();
             this.setState({ display: 'none', showModalSuccess: true });
-        } else if ( res.data.msg === 'fail' ) {
+        } else if ( res.data.msg === 'fail' || res.status !== 200 ) {
             this.setState({ display: 'none', showModalError: true });
         }
     })

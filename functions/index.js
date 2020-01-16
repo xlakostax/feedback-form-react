@@ -7,11 +7,10 @@ const nodemailer = require( 'nodemailer' );
 
 const app = express();
 
-//to make it work you need gmail account
+// Account parameters. firebase functions:config:set gmail.login=yourlogin@gmail.com gmail.pass=yourpass
 const gmailEmail = functions.config().gmail.login;
 const gmailPassword = functions.config().gmail.pass;
 
-//creating function for sending emails
 admin.initializeApp();
 
 // middleware for CORS enabling
@@ -32,6 +31,7 @@ app.use(
 // middleware for parsing JSON
 app.use( bodyParser.json() );
 
+//creating function for sending emails
 app.post( '/', ( req, res ) => {
     const output = `
       <p>You have a new contact request</p>
@@ -54,10 +54,6 @@ app.post( '/', ( req, res ) => {
             pass: gmailPassword
         }
     });
-
-    // transporter.verify((error, success) => {
-    //   error ? console.log( error ) : console.log( 'Server is ready to take message' )
-    // });
 
 // setup email data with unicode symbols
     const mailOptions_request = {
@@ -84,30 +80,17 @@ app.post( '/', ( req, res ) => {
 
     transporter.sendMail( mailOptions_response, ( err, info ) => {
         if ( err ) {
-            return res.json({
+            return res.status(500).json({
                 msg: 'fail'
             })
             console.log( err );
         } else {
-            return res.json({
+            return res.status(200).json({
                 msg: 'success'
             })
-
-            // res.status(200).json({
-            //     msg: 'success'
-            // })
-            // res.end();
-
-            // res.status(200).end(JSON.stringify({
-            //   msg: 'success'
-            // }));
-
             console.log( info );
         }
     })
-    // console.log( 'Message sent: %s', data.messageId);
-    // console.log( 'Preview URL: %s', nodemailer.getTestMessageUrl(data));
-    // res.status( 200 ).end();
 });
 
 exports.app = functions.https.onRequest( app );

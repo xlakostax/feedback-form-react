@@ -8,7 +8,7 @@
   bottom: 0;
   right: 0;
   z-index: 9999;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba( 255, 255, 255, 0.5 );
 }
 
 .Modal {
@@ -20,13 +20,13 @@
   justify-content: center;
   align-items: center;
   bottom: 20%;
-  background-color: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(220, 220, 220, 1);
+  background-color: rgba( 255, 255, 255, 1 );
+  border: 1px solid rgba( 220, 220, 220, 1 );
   border-radius: 5px;
 }
 
 .Modal span {
-  color: rgb(255, 99, 71)
+  color: rgb( 255, 99, 71 )
 }
 
 .Modal:focus {
@@ -34,12 +34,12 @@
 }
 
 #nprogress .bar {
-  background: tomato !important;
+  background: rgb( 255, 99, 71 ) !important;
 }
 #nprogress .peg {
-  box-shadow: 0 0 10px red, 0 0 5px tomato !important;
+  box-shadow: 0 0 10px rgb( 255, 99, 71 ), 0 0 5px rgb( 255, 99, 71 ) !important;
 }
 #nprogress .spinner-icon {
-    border-top-color: tomato !important;
-    border-left-color: tomato !important;
+    border-top-color: rgb( ‎255, 99, 71 ) !important;
+    border-left-color: rgb( 255, 99, 71 ) !important;
 }
